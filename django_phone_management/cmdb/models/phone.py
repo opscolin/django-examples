@@ -12,7 +12,7 @@ class Phone(models.Model):
         ('被借走', '被借走'),
         ('已故障', '已故障')
     )
-    brand = models.CharField(max_length=32, unique=True, verbose_name='手机品牌')
+    brand = models.CharField(max_length=32, verbose_name='手机品牌')
     model = models.CharField(max_length=32, verbose_name='手机型号')
     serial_number = models.CharField(max_length=64, unique=True, verbose_name='手机序列号')
     create_time = models.DateTimeField(auto_now=True, verbose_name='入库时间')
