@@ -1,0 +1,31 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}
+手机借用 | 选择审核人
+{% endblock %}
+
+
+{% block content %}
+<div>
+    <h2>测试手机借用管理</h2>
+    <div>
+        <p>当前借用信息:</p>
+        <p>品牌: {{ phone.brand }};  型号: {{ phone.model }}; 序列号: {{ phone.serial_number }}</p>
+    </div>
+
+    <div>
+        <form action="{% url 'cmdb:borrow-phone-v2' phone.id %}" method="post">
+            {% csrf_token %}
+            <label for="selected_user_email">自选审核人</label>
+            <select name="selected_user_email" id="selected_user_email">
+                {% for user in users %}
+                <option value="{{ user.email }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="发起申请">
+        </form>
+        
+        
+    </div>
+</div>
+{% endblock %}
