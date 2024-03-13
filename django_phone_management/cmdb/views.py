@@ -56,29 +56,32 @@ def borrow_phone_v2(request, pk):
         print('user_email: ', user_email)
         print('request session: ', request.session)
         next_url = request.session.get('next_url') 
-
-        # 新增借用记录
-        pr = BorrowRecord()
-        pr.user = request.user
-        pr.borrow_date = timezone.now()
-        pr.phone = phone
-        pr.save()
-
-        # 修改被此次借用手机状态
-        phone.status = '被借走'
-        phone.save()
-
-        # 发送邮件逻辑
-        subject = f'[{request.user}] 申请借用手机'
-        message = f'[{request.user}] 申请借用手机 ({phone.brand} - {phone.model} - {phone.serial_number})'
-        recipient_list = [user_email]
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list)
-        
-        messages.success(request, '手机借用成功')
-        if next_url:
-            print('next_url: ', next_url)
-            return redirect(next_url)
-        else:
+        if not user_email:
+            messages.error(request, '指定的审核人没有配置邮箱')
             return redirect('admin:index')
+        else:
+            # 新增借用记录
+            pr = BorrowRecord()
+            pr.user = request.user
+            pr.borrow_date = timezone.now()
+            pr.phone = phone
+            pr.save()
+
+            # 修改被此次借用手机状态
+            phone.status = '被借走'
+            phone.save()
+
+            # 发送邮件逻辑
+            subject = f'[{request.user}] 申请借用手机'
+            message = f'[{request.user}] 申请借用手机 ({phone.brand} - {phone.model} - {phone.serial_number})'
+            recipient_list = [user_email]
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list)
+            
+            messages.success(request, '手机借用成功')
+            if next_url:
+                print('next_url: ', next_url)
+                return redirect(next_url)
+            else:
+                return redirect('admin:index')
 
         
